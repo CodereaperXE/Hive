@@ -2,9 +2,10 @@
 #include <fstream>
 #include <zlib.h>
 #include <filesystem>
+#include "crc.hpp"
 namespace fs = std::filesystem;
 
-void CheckIntegrity(fs::path path1, fs::path path2){
+int CheckIntegrity(fs::path& path1, fs::path& path2){
     unsigned long crc1=0,crc2=0;
     const size_t bufferSize=4096;
     char buffer[bufferSize];
@@ -27,13 +28,5 @@ void CheckIntegrity(fs::path path1, fs::path path2){
 
     if(crc1==crc2) std::cout<<"true";
     else std::cout<<"false";
-
-
-}
-
-
-int main(){
-    fs::path p{"./file"};
-    fs::path q{"./file1"};
-    CheckIntegrity(p,q);
+    return 0;
 }
