@@ -73,7 +73,10 @@ void Backup(fs::path& sourcePath, fs::path& destinationPath){
             for(const auto& entry : fs::recursive_directory_iterator(sourcePath)){
                 fs::path dstPath = fs::path(tempdstPath / fs::relative(entry.path(),sourcePath));
                 // std::cout<<"df"<< dstPath.string()<<std::endl;
-                if(!CheckIntegrity(fs::path(entry.path()),dstPath)){
+                if(!fs::exists(fs::path(entry.path())) || !fs::exists(dstPath)){
+                    std::cout<<"file or dir missing"<<std::endl;
+                }
+                else if(!CheckIntegrity(fs::path(entry.path()),dstPath)){
                     std::cout<<"changed" << dstPath <<std::endl;
                 }
             }
