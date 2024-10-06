@@ -53,11 +53,36 @@ void CheckFile(fs::path& path){
 }
 
 void Backup(fs::path& sourcePath, fs::path& destinationPath){
-    CheckFile(sourcePath);
-    
-    fs::copy(sourcePath,destinationPath,fs::copy_options::update_existing);
-    
+    //checking if dir/file exists in destination path
+    fs::path tempdstPath = fs::path(destinationPath / sourcePath.filename());
 
+    //if does not exists in destination directly copy from source to destination
+    if(!fs::exists(tempdstPath)){
+        //if dir recursively copy to dst from src
+        if(fs::is_directory(sourcePath))
+            fs::copy(sourcePath,tempdstPath,fs::copy_options::update_existing | fs::copy_options::recursive);
+        //if file directly copy to dst from src
+        if(fs::is_regular_file(sourcePath))
+            fs::copy(sourcePath,tempdstPath,fs::copy_options::update_existing);
+    }
+    
+    //if exists
+    else if(fs::exists(tempdstPath)){
+        //if dir then compare
+        if(fs::is_directory(tempdstPath)){
+            for(const auto& entry : fs::recursive_directory_iterator(sourcePath)){
+                fs::path dstPath = fs::path(tempdstPath / fs::relative(entry.path(),sourcePath));
+                // std::cout<<"df"<< dstPath.string()<<std::endl;
+            }
+            // std::cout<<"existing"<<std::endl;
+        }
+        //if file then compare
+        if(fs::is_regular_file(tempdstPath)){
+            std::cout<<"existing" << tempdstPath <<std::endl;
+        }
+    }
+
+    
 }
 
 int main(){
@@ -82,9 +107,10 @@ int main(){
 
     // fs::create_directory(dirpath);
     
-    fs::path s{"./test/s"};
-    fs::path d{"./desk/s"};
-    std::cout<< DifferentialCopy(s,d);
+    fs::path s{"./test/"};
+    fs::path d{"./desk/"};
+    // std::cout<< DifferentialCopy(s,d);
+    Backup(s,d);
 
     
     
