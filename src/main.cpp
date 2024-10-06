@@ -8,7 +8,7 @@
 
 namespace fs=std::filesystem;
 
-int CheckIntegrity(fs::path& path1, fs::path& path2){
+int CheckIntegrity(const fs::path& path1,const fs::path& path2){
     unsigned long crc1=0,crc2=0;
     const size_t bufferSize=4096;
     char buffer[bufferSize];
@@ -73,6 +73,9 @@ void Backup(fs::path& sourcePath, fs::path& destinationPath){
             for(const auto& entry : fs::recursive_directory_iterator(sourcePath)){
                 fs::path dstPath = fs::path(tempdstPath / fs::relative(entry.path(),sourcePath));
                 // std::cout<<"df"<< dstPath.string()<<std::endl;
+                if(!CheckIntegrity(fs::path(entry.path()),dstPath)){
+                    std::cout<<"changed" << dstPath <<std::endl;
+                }
             }
             // std::cout<<"existing"<<std::endl;
         }
