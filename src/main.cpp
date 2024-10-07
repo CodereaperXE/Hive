@@ -1,8 +1,8 @@
 //5/10/2024 RB
 #include <iostream>
-#include <fstream>
+#include <fstream> //for std::ifstream and ofstream
 #include <filesystem>
-#include <zlib.h>
+#include <zlib.h> //for crc function use -lz
 
 // #include "crc.hpp"
 
@@ -96,9 +96,9 @@ void Backup(fs::path& sourcePath, fs::path& destinationPath){
 
 
 
-#include <chrono>
+#include <chrono> //for time
 // #include <ctime>
-#include <sstream>
+#include <sstream> //for ostringstream
 
 #include <string>
 
