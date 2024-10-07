@@ -52,6 +52,9 @@ void CheckFile(fs::path& path){
 
 }
 
+
+
+
 void Backup(fs::path& sourcePath, fs::path& destinationPath){
     //checking if dir/file exists in destination path
     fs::path tempdstPath = fs::path(destinationPath / sourcePath.filename());
@@ -91,6 +94,43 @@ void Backup(fs::path& sourcePath, fs::path& destinationPath){
     
 }
 
+
+
+#include <chrono>
+// #include <ctime>
+#include <sstream>
+
+#include <string>
+
+std::string GetTime(){
+    // auto now = std::chrono::system_clock::now();
+    std::time_t currentTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    std::ostringstream oss;
+    oss << std::put_time(std::localtime(&currentTime), "%Y-%m-%d %X");
+    return oss.str();
+}
+
+
+//implementation of versioning system
+
+void CreateVersion(fs::path fPath){
+    //getting current time
+    std::string curTime = GetTime();
+    //creating time path to create new dir with timestamp suffix
+    fs::path timePath = fs::path(fPath.string() + "_" + curTime.substr(0,10));
+    //if backup dir doesnt exists create 
+    if(!fs::exists(fs::path(fPath.string()+"_hbk"))) fs::create_directory(fPath.string()+"_hbk");
+    //creating dir with timestamp suffix inside backup dir
+    fs::path finalFpath = fs::path(fPath.string()+"_hbk"+"/"+timePath.filename().string());
+    fs::create_directory(finalFpath);
+    //moving file to backup dir/timestamp suffix dir
+    fs::rename(fPath,finalFpath / fPath);
+
+   
+    
+    
+}
+
 int main(){
     // fs::path dirpath{"./"};
 
@@ -113,11 +153,18 @@ int main(){
 
     // fs::create_directory(dirpath);
     
-    fs::path s{"./test/"};
-    fs::path d{"./desk/"};
+    // fs::path s{"./test/"};
+    // fs::path d{"./desk/"};
     // std::cout<< DifferentialCopy(s,d);
-    Backup(s,d);
-
+    // Backup(s,d);
+    // ShowTime();
+    // CreateVersion("./dfdfdfd");
+    // std::ofstream file("./dfdfdfd_2024-10-07/tt");
+    // file.write("hello",4);
+    // file.close();
+    // fs::rename("dfdfdfd_2024-10-07","./desk/df");
     
+    // fs::rename("./test","./o/test");
     
+    CreateVersion(fs::path{"./something"});
 }
