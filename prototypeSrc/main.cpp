@@ -124,7 +124,7 @@ void CreateVersion(fs::path fPath){
     fs::path finalFpath = fs::path(fPath.string()+"_hbk"+"/"+timePath.filename().string());
     fs::create_directory(finalFpath);
     //moving file to backup dir/timestamp suffix dir
-    fs::rename(fPath,finalFpath / fPath);
+    fs::rename(fPath,finalFpath / fPath.filename());
 
    
     
@@ -166,5 +166,9 @@ int main(){
     
     // fs::rename("./test","./o/test");
     
-    CreateVersion(fs::path{"./something"});
+    // CreateVersion(fs::path{"./something"});
+    // fs::path s("./source/");
+    // fs::path d("./ceurse/");
+    // Backup(s,d);
+    // CreateVersion(fs::path{"./test/b"});
 }
