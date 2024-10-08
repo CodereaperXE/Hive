@@ -8,6 +8,8 @@
 
 namespace fs=std::filesystem;
 
+void CreateVersion(fs::path);
+
 int CheckIntegrity(const fs::path& path1,const fs::path& path2){
     unsigned long crc1=0,crc2=0;
     const size_t bufferSize=4096;
@@ -77,10 +79,19 @@ void Backup(fs::path& sourcePath, fs::path& destinationPath){
                 fs::path dstPath = fs::path(tempdstPath / fs::relative(entry.path(),sourcePath));
                 // std::cout<<"df"<< dstPath.string()<<std::endl;
                 if(!fs::exists(fs::path(entry.path())) || !fs::exists(dstPath)){
-                    std::cout<<"file or dir missing"<<std::endl;
-                }
-                else if(!CheckIntegrity(fs::path(entry.path()),dstPath)){
+                    //(bug might exist) check if src file has backup existing
+                    
+                    std::cout<<"file or dir missing"<<entry.path()<<" "<<dstPath<<std::endl;
+                } 
+                //bug here (didnt consider backup taken)
+                
+                if(!CheckIntegrity(fs::path(entry.path()),dstPath)){
                     std::cout<<"changed" << dstPath <<std::endl;
+                    //if file changed
+                    //create versioned backup
+                    CreateVersion(dstPath);
+                    //put new changed file
+                    fs::copy(entry.path(),dstPath);
                 }
             }
             // std::cout<<"existing"<<std::endl;
@@ -114,21 +125,22 @@ std::string GetTime(){
 //implementation of versioning system
 
 void CreateVersion(fs::path fPath){
+    //check
+    if(!fs::exists(fPath) || fs::is_directory(fPath)) {
+        std::cout<< "path doesnt exists or path not file";
+        return;
+    }
     //getting current time
-    std::string curTime = GetTime();
+    std::string curDateTime = GetTime();
     //creating time path to create new dir with timestamp suffix
-    fs::path timePath = fs::path(fPath.string() + "_" + curTime.substr(0,10));
+    fs::path dateTimePath = fs::path(fPath.string() + "_" + curDateTime.substr(0,10) +"_"+ curDateTime.substr(11,19));
     //if backup dir doesnt exists create 
     if(!fs::exists(fs::path(fPath.string()+"_hbk"))) fs::create_directory(fPath.string()+"_hbk");
     //creating dir with timestamp suffix inside backup dir
-    fs::path finalFpath = fs::path(fPath.string()+"_hbk"+"/"+timePath.filename().string());
+    fs::path finalFpath = fs::path(fPath.string()+"_hbk"+"/"+dateTimePath.filename().string());
     fs::create_directory(finalFpath);
     //moving file to backup dir/timestamp suffix dir
     fs::rename(fPath,finalFpath / fPath.filename());
-
-   
-    
-    
 }
 
 int main(){
@@ -170,5 +182,8 @@ int main(){
     // fs::path s("./source/");
     // fs::path d("./ceurse/");
     // Backup(s,d);
-    // CreateVersion(fs::path{"./test/b"});
+    fs::path s{"./primary/"};
+    fs::path d{"./backup/"};
+
+    Backup(s,d);
 }
