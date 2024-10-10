@@ -4,6 +4,10 @@
 #include <fstream>
 #include <ostream>
 #include "hive.hpp"
+#include <openssl/evp.h>
+#include <cstring>
+#include <fstream>
+
 
 namespace fs = std::filesystem;
 
@@ -81,27 +85,74 @@ void HiveBackup::Backup(fs::path& sourcePath, fs::path& destinationPath){
 
 }
 
-int HiveBackup::CheckIntegrity(const fs::path& path1,const fs::path& path2){
-    unsigned long crc1=0,crc2=0;
-    const size_t bufferSize=4096;
+int HiveBackup::CheckIntegrity(const fs::path& path1, const fs::path& path2) {
+    size_t bufferSize = 4096; // Define a buffer size for reading files
     char buffer[bufferSize];
 
-    std::ifstream file1(path1,std::ios::binary);
-    std::ifstream file2(path2,std::ios::binary);
+    std::ifstream file1(path1, std::ios::binary);
+    std::ifstream file2(path2, std::ios::binary);
 
-    while(file1.read(buffer,bufferSize) || file1.gcount() > 0){
-        crc1=crc32(crc1,reinterpret_cast<const unsigned char*>(buffer),file1.gcount());
+    // Check if both files opened successfully
+    if (!file1.is_open() || !file2.is_open()) {
+        throw std::runtime_error("Failed to open one or both files.");
     }
 
-    std::fill(std::begin(buffer),std::end(buffer),'\0');
-
-    while(file2.read(buffer,bufferSize) || file2.gcount() > 0){
-        crc2=crc32(crc2,reinterpret_cast<const unsigned char*>(buffer),file2.gcount());
+    EVP_MD_CTX* ctx1 = EVP_MD_CTX_new();
+    EVP_MD_CTX* ctx2 = EVP_MD_CTX_new();
+    
+    // Initialize the digest contexts for SHA-256
+    if (EVP_DigestInit_ex(ctx1, EVP_sha256(), nullptr) != 1) {
+        EVP_MD_CTX_free(ctx1);
+        EVP_MD_CTX_free(ctx2); // Free ctx2 as well on failure
+        throw std::runtime_error("Failed to initialize digest for file 1");
     }
+
+    if (EVP_DigestInit_ex(ctx2, EVP_sha256(), nullptr) != 1) {
+        EVP_MD_CTX_free(ctx1);
+        EVP_MD_CTX_free(ctx2);
+        throw std::runtime_error("Failed to initialize digest for file 2");
+    }
+
+    // Read file1 and update hash
+    while (file1.read(buffer, bufferSize) || file1.gcount() > 0) {
+        EVP_DigestUpdate(ctx1, buffer, file1.gcount());
+    }
+
+    // Read file2 and update hash
+    while (file2.read(buffer, bufferSize) || file2.gcount() > 0) {
+        EVP_DigestUpdate(ctx2, buffer, file2.gcount());
+    }
+
+    unsigned char hash1[EVP_MAX_MD_SIZE];
+    unsigned char hash2[EVP_MAX_MD_SIZE];
+    unsigned int hash1Length;
+    unsigned int hash2Length;
+
+    // Finalize the digest for file 1
+    if (EVP_DigestFinal_ex(ctx1, hash1, &hash1Length) != 1) {
+        EVP_MD_CTX_free(ctx1);
+        EVP_MD_CTX_free(ctx2);
+        throw std::runtime_error("Failed to finalize digest for file 1");
+    }
+
+    // Finalize the digest for file 2
+    if (EVP_DigestFinal_ex(ctx2, hash2, &hash2Length) != 1) {
+        EVP_MD_CTX_free(ctx1);
+        EVP_MD_CTX_free(ctx2);
+        throw std::runtime_error("Failed to finalize digest for file 2");
+    }
+
+    // Clean up
+    EVP_MD_CTX_free(ctx1);
+    EVP_MD_CTX_free(ctx2);
 
     file1.close();
     file2.close();
 
-    if(crc1==crc2) return 1;
-    else return 0;
+    // Compare the hashes
+    if (hash1Length != hash2Length || memcmp(hash1, hash2, hash1Length) != 0) {
+        return 0; // Files are different
+    }
+
+    return 1; // Files are the same
 }

@@ -1,1 +1,1 @@
-g++ -std=c++20 -o main main.cpp hive.cpp -lz
+g++ -std=c++20 -o main main.cpp hive.cpp -lssl -lcrypto
