@@ -14,7 +14,7 @@ namespace fs = std::filesystem;
 class HiveBackup{
     public:
     
-    void Backup(fs::path&,fs::path&);
+    int VersionBackup(fs::path&,fs::path&);
 
     private:
     std::tuple<std::vector<unsigned char>, unsigned int> GenerateHash(std::ifstream& );

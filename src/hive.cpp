@@ -12,6 +12,7 @@
 
 namespace fs = std::filesystem;
 
+//version backup functions
 void HiveBackup::CreateVersion(fs::path fPath){
     //check
     if(!fs::exists(fPath) || fs::is_directory(fPath)) {
@@ -39,7 +40,7 @@ std::string HiveBackup::GetTime(){
     return oss.str();
  }
 
-void HiveBackup::Backup(fs::path& sourcePath, fs::path& destinationPath){
+int HiveBackup::VersionBackup(fs::path& sourcePath, fs::path& destinationPath){
     //checking if dir/file exists in destination path
     fs::path tempdstPath = fs::path(destinationPath / sourcePath.filename());
 
@@ -64,6 +65,7 @@ void HiveBackup::Backup(fs::path& sourcePath, fs::path& destinationPath){
                     //(bug might exist) check if src file has backup existing
                     
                     std::cout<<"file or dir missing"<<entry.path()<<" "<<dstPath<<std::endl;
+                    return 0;
                 } 
                 //bug here (didnt consider backup taken)
                 
@@ -83,8 +85,16 @@ void HiveBackup::Backup(fs::path& sourcePath, fs::path& destinationPath){
             std::cout<<"existing" << tempdstPath <<std::endl;
         }
     }
-
+    return 1;
 }
+
+//normal backup functions
+
+
+
+
+
+//hash evaluation functions
 
 
 std::tuple<std::vector<unsigned char>, unsigned int> HiveBackup::GenerateHash(std::ifstream& file) {

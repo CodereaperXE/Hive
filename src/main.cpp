@@ -11,6 +11,6 @@ int main(){
     fs::path source{"./something/"};
     fs::path dest{"./fb/"};
 
-    h.Backup(source,dest);
+    h.VersionBackup(source,dest);
 
 }
