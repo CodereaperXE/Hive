@@ -13,23 +13,30 @@
 namespace fs = std::filesystem;
 
 //version backup functions
-void HiveBackup::CreateVersion(fs::path fPath){
+void HiveBackup::CreateVersionBackup(fs::path versionFPath,fs::path newFPath){
     //check
-    if(!fs::exists(fPath) || fs::is_directory(fPath)) {
+    if(!fs::exists(versionFPath) || fs::is_directory(versionFPath)) {
         std::cout<< "path doesnt exists or path not file";
         return;
     }
     //getting current time
     std::string curDateTime = GetTime();
     //creating time path to create new dir with timestamp suffix
-    fs::path dateTimePath = fs::path(fPath.string() + "_" + curDateTime.substr(0,10) +"_"+ curDateTime.substr(11,19));
+    fs::path dateTimePath = fs::path(versionFPath.string() + "_" + curDateTime.substr(0,10) +"_"+ curDateTime.substr(11,19));
     //if backup dir doesnt exists create 
-    if(!fs::exists(fs::path(fPath.string()+"_hbk"))) fs::create_directory(fPath.string()+"_hbk");
+    if(!fs::exists(fs::path(versionFPath.string()+"_hbk"))) fs::create_directory(versionFPath.string()+"_hbk");
     //creating dir with timestamp suffix inside backup dir
-    fs::path finalFpath = fs::path(fPath.string()+"_hbk"+"/"+dateTimePath.filename().string());
+    fs::path finalFpath = fs::path(versionFPath.string()+"_hbk"+"/"+dateTimePath.filename().string());
     fs::create_directory(finalFpath);
     //moving file to backup dir/timestamp suffix dir
-    fs::rename(fPath,finalFpath / fPath.filename());
+    fs::rename(versionFPath,finalFpath / versionFPath.filename());
+    //moving new file to old file path
+    fs::copy(newFPath,versionFPath);
+    
+}
+
+void HiveBackup::CreateDifferentialBackup(fs::path backupFPath, fs::path newFPath){
+    fs::copy(newFPath,backupFPath,fs::copy_options::overwrite_existing);
 }
 
 std::string HiveBackup::GetTime(){
@@ -40,7 +47,7 @@ std::string HiveBackup::GetTime(){
     return oss.str();
  }
 
-int HiveBackup::VersionBackup(fs::path& sourcePath, fs::path& destinationPath){
+int HiveBackup::Backup(fs::path& sourcePath, fs::path& destinationPath,BackupMode mode){
     //checking if dir/file exists in destination path
     fs::path tempdstPath = fs::path(destinationPath / sourcePath.filename());
 
@@ -71,11 +78,17 @@ int HiveBackup::VersionBackup(fs::path& sourcePath, fs::path& destinationPath){
                 
                 if(!CheckIntegrity(fs::path(entry.path()),dstPath)){
                     std::cout<<"changed" << dstPath <<std::endl;
-                    //if file changed
-                    //create versioned backup
-                    CreateVersion(dstPath);
-                    //put new changed file
-                    fs::copy(entry.path(),dstPath);
+                    if(mode == BackupMode::VERSIONED){
+                        //if file changed
+                        //create versioned backup
+                        //put new changed file
+                        CreateVersionBackup(dstPath,entry.path());
+                    }
+
+                    else if(mode == BackupMode::DIFFERENTIAL){
+                        //if differential backup mode
+                        CreateDifferentialBackup(entry.path(),dstPath);
+                    }
                 }
             }
             // std::cout<<"existing"<<std::endl;
@@ -88,7 +101,7 @@ int HiveBackup::VersionBackup(fs::path& sourcePath, fs::path& destinationPath){
     return 1;
 }
 
-//normal backup functions
+//differential backup 
 
 
 

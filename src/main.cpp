@@ -10,7 +10,7 @@ int main(){
     
     fs::path source{"./something/"};
     fs::path dest{"./fb/"};
-
-    h.VersionBackup(source,dest);
+    
+    h.Backup(source,dest,BackupMode::VERSIONED);
 
 }

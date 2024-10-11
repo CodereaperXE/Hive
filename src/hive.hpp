@@ -11,15 +11,23 @@ namespace fs = std::filesystem;
 #ifndef HIVE_HPP
 #define HIVE_HPP
 
+enum BackupMode{
+    DIFFERENTIAL,
+    VERSIONED
+};
+
 class HiveBackup{
     public:
     
-    int VersionBackup(fs::path&,fs::path&);
+    int Backup(fs::path&,fs::path&,BackupMode);
+
+
 
     private:
     std::tuple<std::vector<unsigned char>, unsigned int> GenerateHash(std::ifstream& );
     int CheckIntegrity(const fs::path&, const fs::path&);
-    void CreateVersion(fs::path);
+    void CreateDifferentialBackup(fs::path,fs::path);
+    void CreateVersionBackup(fs::path,fs::path);
     std::string GetTime();
 
     
