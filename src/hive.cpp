@@ -12,7 +12,7 @@
 
 namespace fs = std::filesystem;
 
-//version backup functions
+//version backup function
 void HiveBackup::CreateVersionBackup(fs::path versionFPath,fs::path newFPath){
     //check
     if(!fs::exists(versionFPath) || fs::is_directory(versionFPath)) {
@@ -35,6 +35,7 @@ void HiveBackup::CreateVersionBackup(fs::path versionFPath,fs::path newFPath){
     
 }
 
+//differential backup function
 void HiveBackup::CreateDifferentialBackup(fs::path backupFPath, fs::path newFPath){
     fs::copy(newFPath,backupFPath,fs::copy_options::overwrite_existing);
 }
@@ -71,8 +72,19 @@ int HiveBackup::Backup(fs::path& sourcePath, fs::path& destinationPath,BackupMod
                 if(!fs::exists(fs::path(entry.path())) || !fs::exists(dstPath)){
                     //(bug might exist) check if src file has backup existing
                     
-                    std::cout<<"file or dir missing"<<entry.path()<<" "<<dstPath<<std::endl;
-                    return 0;
+                    std::cout<<"File or directory missing "<<entry.path()<<" "<<dstPath<<std::endl;
+                    //adding bug fix by copying file or directory
+                    //if directory recursive copy;
+                    if(fs::is_directory(entry.path())){
+                        std::cout<<"Adding missing directory "<<entry.path()<<" "<<dstPath<<std::endl;
+                        fs::copy(entry.path(),dstPath,fs::copy_options::recursive);
+                    }
+                    //if regular file then copy
+                    if(fs::is_regular_file(entry.path())){
+                        std::cout<<"Adding missing file "<<entry.path()<<" "<<dstPath<<std::endl;
+                        fs::copy(entry.path(),dstPath,fs::copy_options::overwrite_existing);
+                    }
+                    // return 0;
                 } 
                 //bug here (didnt consider backup taken)
                 
@@ -100,10 +112,6 @@ int HiveBackup::Backup(fs::path& sourcePath, fs::path& destinationPath,BackupMod
     }
     return 1;
 }
-
-//differential backup 
-
-
 
 
 
