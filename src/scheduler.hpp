@@ -3,6 +3,8 @@
 #include <vector>
 #include <chrono>
 #include <thread>  
+#include <memory>
+#include <functional>
 
 
 class BackupJob{
@@ -15,8 +17,21 @@ class BackupJob{
 
 class HiveScheduler{
     public:
-    HiveScheduler(){}
-    int AddSchedule(std::string,int,int,int,std::vector<BackupJob>&);
+     
+    ~HiveScheduler();
+    
+    int AddSchedule(std::string,int,int,int);
     void PrintJob(std::string& name);
-    void RunScheduler(std::vector<BackupJob>&);
+    
+    
+    void StartScheduler();
+    void StopScheduler();
+    
+    private:
+   
+    void RunScheduler();
+
+    std::vector<BackupJob> jobList;
+    int schedulerThreadFlag;
+    std::unique_ptr<std::thread> schedulerThreadPtr;
 };
