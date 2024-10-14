@@ -3,8 +3,10 @@
 #include <zlib.h>
 #include <fstream>
 #include <ostream>
+#include <cstring>
 #include <tuple>
 #include <vector>
+#include <openssl/evp.h>
 
 namespace fs = std::filesystem;
 
