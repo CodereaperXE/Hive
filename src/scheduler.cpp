@@ -1,32 +1,19 @@
-#include <iostream>
-#include <filesystem>
-#include <vector>
-#include <chrono>
+#include "scheduler.hpp"
 
 
-class BackupJob{
-    public:
-    std::string jobName;
-    std::chrono::minutes targetDuration;
-    std::chrono::system_clock::time_point nextSchedule;
-    BackupJob(std::string jobName,int targetDuration) : jobName(jobName), targetDuration(targetDuration){}
-};
-
-std::vector <BackupJob> v;
-
-void AddSchedule(std::string jobName,int minuteDuration,std::vector<BackupJob>& jobList){
+int HiveScheduler::AddSchedule(std::string jobName,int dayDuration, int hourDuration, int minuteDuration, std::vector<BackupJob>& jobList){
     std::chrono::system_clock::time_point curTime = std::chrono::system_clock::now();
-    BackupJob job(jobName,minuteDuration);
-    job.nextSchedule=curTime + job.targetDuration;
+    BackupJob job(jobName,dayDuration + hourDuration + minuteDuration);
+    job.nextSchedule = curTime + job.targetDuration;
     jobList.push_back(job);
-    
+    return 0;
 }
 
-void PrintJob(std::string& name){
+void HiveScheduler::PrintJob(std::string& name){
     std::cout<<name<<std::endl;
 }
 
-void Run(std::vector<BackupJob>& jobList){
+void HiveScheduler::RunScheduler(std::vector<BackupJob>& jobList){
     while(1){
     
         for(auto curJob = jobList.begin();curJob!=jobList.end();curJob++){
@@ -34,14 +21,15 @@ void Run(std::vector<BackupJob>& jobList){
                 curJob->nextSchedule = std::chrono::system_clock::now() + curJob->targetDuration;
                 PrintJob(curJob->jobName);
             }
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     }
 }
 
+
 int main(){
-    std::string name = "first";
-    std::string name2= "second";
-    AddSchedule(name,1,v);
-    AddSchedule(name2,2,v);
-    Run(v);
+    HiveScheduler h;
+    std::vector<BackupJob> j;
+    h.AddSchedule("first",0,0,1,j);
+    h.RunScheduler(j);
 }
