@@ -21,11 +21,15 @@ enum BackupMode{
 class HiveBackup{
     public:
     
+    HiveBackup(){}
+    HiveBackup(fs::path sourcePath ,fs::path destinationPath ,BackupMode mode) : sourcePath(sourcePath), destinationPath(destinationPath) {}
+    void StartBackup();
     int Backup(fs::path&,fs::path&,BackupMode);
 
-
-
     private:
+    fs::path sourcePath;
+    fs::path destinationPath;
+    BackupMode mode;
     std::tuple<std::vector<unsigned char>, unsigned int> GenerateHash(std::ifstream& );
     int CheckIntegrity(const fs::path&, const fs::path&);
     void CreateDifferentialBackup(fs::path,fs::path);

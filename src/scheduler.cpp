@@ -5,9 +5,9 @@ HiveScheduler::~HiveScheduler(){
     schedulerThreadFlag=0;
 }
 
-int HiveScheduler::AddSchedule(std::string jobName,int dayDuration, int hourDuration, int minuteDuration){
+int HiveScheduler::AddSchedule(std::string jobName,int dayDuration, int hourDuration, int minuteDuration, HiveBackup backupObj){
     std::chrono::system_clock::time_point curTime = std::chrono::system_clock::now();
-    BackupJob job(jobName,dayDuration + hourDuration + minuteDuration);
+    BackupJob job(jobName,dayDuration + hourDuration + minuteDuration, backupObj);
     job.nextSchedule = curTime + job.targetDuration;
     jobList.push_back(job);
     return 0;
@@ -23,6 +23,8 @@ void HiveScheduler::RunScheduler(){
             if(std::chrono::system_clock::now() >= curJob->nextSchedule) {
                 curJob->nextSchedule = std::chrono::system_clock::now() + curJob->targetDuration;
                 PrintJob(curJob->jobName);
+                //needs to be threaded as backup takes time
+                curJob->backupObj.StartBackup();
             }
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
@@ -41,8 +43,18 @@ void HiveScheduler::StopScheduler(){
 
 
 int main(){
+
+    
+    
+    fs::path source{"./something/"};
+    fs::path dest{"./destination/"};
+    
+    HiveBackup b(source,dest,VERSIONED);
+
+
     HiveScheduler h;
-    h.AddSchedule("first",0,0,1);
+    
+    h.AddSchedule("first",0,0,1,b);
     h.StartScheduler();
 
     std::this_thread::sleep_for(std::chrono::seconds(70));

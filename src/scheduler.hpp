@@ -5,6 +5,7 @@
 #include <thread>  
 #include <memory>
 #include <functional>
+#include "hive.hpp"
 
 
 class BackupJob{
@@ -12,7 +13,8 @@ class BackupJob{
     std::string jobName;
     std::chrono::minutes targetDuration;
     std::chrono::system_clock::time_point nextSchedule;
-    BackupJob(std::string jobName,int targetDuration) : jobName(jobName), targetDuration(targetDuration){}
+    HiveBackup backupObj;
+    BackupJob(std::string jobName,int targetDuration,HiveBackup backupObj) : jobName(jobName), targetDuration(targetDuration), backupObj(backupObj){}
 };
 
 class HiveScheduler{
@@ -20,7 +22,7 @@ class HiveScheduler{
      
     ~HiveScheduler();
     
-    int AddSchedule(std::string,int,int,int);
+    int AddSchedule(std::string,int,int,int,HiveBackup);
     void PrintJob(std::string& name);
     
     

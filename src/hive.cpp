@@ -3,6 +3,12 @@
 
 namespace fs = std::filesystem;
 
+
+//scheduler specific function
+void HiveBackup::StartBackup(){
+    Backup(sourcePath,destinationPath,mode);
+}
+
 //version backup function
 void HiveBackup::CreateVersionBackup(fs::path versionFPath,fs::path newFPath){
     //check
