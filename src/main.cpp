@@ -8,9 +8,9 @@ namespace fs = std::filesystem;
 int main(){
     HiveBackup h;
     
-    fs::path source{"./something/"};
-    fs::path dest{"./fb/"};
+    fs::path source{"/media/rishab/New Volume/lostdata/"};
+    fs::path dest{"/media/rishab/New Volume/backup/"};
     
-    h.Backup(source,dest,BackupMode::VERSIONED);
+    h.Backup(source,dest,VERSIONED);
 
 }
