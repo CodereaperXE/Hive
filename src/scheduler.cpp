@@ -17,6 +17,12 @@ void HiveScheduler::PrintJob(std::string& name){
     std::cout<<name<<std::endl;
 }
 
+//theaded implementation
+void HiveScheduler::RunSchedulerThreaded(HiveBackup& backupObj){
+    std::thread backupThread(&HiveBackup::StartBackup,&backupObj);
+    backupThread.detach(); //risky approach (not recommended and has to be changed in future)
+}
+
 void HiveScheduler::RunScheduler(){
     while(!schedulerThreadFlag){ 
         for(auto curJob = jobList.begin();curJob!=jobList.end();curJob++){
@@ -24,7 +30,13 @@ void HiveScheduler::RunScheduler(){
                 curJob->nextSchedule = std::chrono::system_clock::now() + curJob->targetDuration;
                 PrintJob(curJob->jobName);
                 //needs to be threaded as backup takes time
-                curJob->backupObj.StartBackup();
+                // curJob->backupObj.StartBackup();
+
+                //threaded implementation
+                // std::cout<<curJob->backupObj.GetBackupStatus();
+                if(!curJob->backupObj.GetBackupStatus())
+                    HiveScheduler::RunSchedulerThreaded(curJob->backupObj);
+                else std::cout<<"backup busy"<<std::endl;
             }
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
@@ -54,7 +66,7 @@ int main(){
 
     HiveScheduler h;
     
-    h.AddSchedule("first",0,0,1,b);
+    h.AddSchedule("first",0,0,0,b);
     h.StartScheduler();
 
     std::this_thread::sleep_for(std::chrono::seconds(70));

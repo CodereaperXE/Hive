@@ -21,10 +21,11 @@ enum BackupMode{
 class HiveBackup{
     public:
     
-    HiveBackup(){}
-    HiveBackup(fs::path sourcePath ,fs::path destinationPath ,BackupMode mode) : sourcePath(sourcePath), destinationPath(destinationPath) {}
+    HiveBackup();
+    HiveBackup(fs::path,fs::path,BackupMode);
     void StartBackup();
     int Backup(fs::path&,fs::path&,BackupMode);
+    int GetBackupStatus();
 
     private:
     fs::path sourcePath;
@@ -35,6 +36,7 @@ class HiveBackup{
     void CreateDifferentialBackup(fs::path,fs::path);
     void CreateVersionBackup(fs::path,fs::path);
     std::string GetTime();
+    int backupStatus;
 
     
 };

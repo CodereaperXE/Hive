@@ -4,9 +4,16 @@
 namespace fs = std::filesystem;
 
 
+HiveBackup::HiveBackup(){ backupStatus=0; }
+HiveBackup::HiveBackup(fs::path sourcePath ,fs::path destinationPath ,BackupMode mode) : sourcePath(sourcePath), destinationPath(destinationPath) { backupStatus = 0;}
+
 //scheduler specific function
 void HiveBackup::StartBackup(){
     Backup(sourcePath,destinationPath,mode);
+}
+
+int HiveBackup::GetBackupStatus(){
+    return backupStatus;
 }
 
 //version backup function
@@ -46,6 +53,8 @@ std::string HiveBackup::GetTime(){
  }
 
 int HiveBackup::Backup(fs::path& sourcePath, fs::path& destinationPath,BackupMode mode){
+    //set backup status busy
+    backupStatus=1;
     //checking if dir/file exists in destination path
     fs::path tempdstPath = fs::path(destinationPath / sourcePath.filename());
 
@@ -107,6 +116,8 @@ int HiveBackup::Backup(fs::path& sourcePath, fs::path& destinationPath,BackupMod
             std::cout<<"existing" << tempdstPath <<std::endl;
         }
     }
+    //reset backup status busy flag
+    backupStatus=0;
     return 1;
 }
 

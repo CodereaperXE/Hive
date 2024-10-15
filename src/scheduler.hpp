@@ -32,6 +32,7 @@ class HiveScheduler{
     private:
    
     void RunScheduler();
+    void RunSchedulerThreaded(HiveBackup&);
 
     std::vector<BackupJob> jobList;
     int schedulerThreadFlag;
