@@ -5,7 +5,7 @@ namespace fs = std::filesystem;
 
 
 HiveBackup::HiveBackup(){ backupStatus=0; }
-HiveBackup::HiveBackup(fs::path sourcePath ,fs::path destinationPath ,BackupMode mode) : sourcePath(sourcePath), destinationPath(destinationPath) { backupStatus = 0;}
+HiveBackup::HiveBackup(fs::path sourcePath ,fs::path destinationPath ,BackupMode mode) : sourcePath(sourcePath), destinationPath(destinationPath), mode(mode){ backupStatus = 0;}
 
 //scheduler specific function
 void HiveBackup::StartBackup(){
@@ -95,11 +95,12 @@ int HiveBackup::Backup(fs::path& sourcePath, fs::path& destinationPath,BackupMod
                 //bug here (didnt consider backup taken)
                 
                 if(!CheckIntegrity(fs::path(entry.path()),dstPath)){
-                    std::cout<<"changed" << dstPath <<std::endl;
+                    // std::cout<<"changed" << dstPath << ((BackupMode::VERSIONED==mode) ? 1 : 0) <<std::endl;
                     if(mode == BackupMode::VERSIONED){
                         //if file changed
                         //create versioned backup
                         //put new changed file
+                        std::cout<<"creating version"<<std::endl;
                         CreateVersionBackup(dstPath,entry.path());
                     }
 
