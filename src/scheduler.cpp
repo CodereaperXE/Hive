@@ -1,10 +1,11 @@
 #include "scheduler.hpp"
 
-
+//default constructtor
 HiveScheduler::~HiveScheduler(){
     schedulerThreadFlag=0;
 }
 
+//add backup schedule for joblist
 int HiveScheduler::AddSchedule(std::string jobName,int dayDuration, int hourDuration, int minuteDuration, HiveBackup backupObj){
     std::chrono::system_clock::time_point curTime = std::chrono::system_clock::now();
     BackupJob job(jobName,dayDuration + hourDuration + minuteDuration, backupObj);
@@ -13,6 +14,7 @@ int HiveScheduler::AddSchedule(std::string jobName,int dayDuration, int hourDura
     return 0;
 }
 
+//prints backupjob name
 void HiveScheduler::PrintJob(std::string& name){
     std::cout<<name<<std::endl;
 }
@@ -23,6 +25,7 @@ void HiveScheduler::RunSchedulerThreaded(HiveBackup& backupObj){
     backupThread.detach(); //risky approach (not recommended and has to be changed in future)
 }
 
+//run the scheduler (private callback from startscheduler function, threaded implementation)
 void HiveScheduler::RunScheduler(){
     while(!schedulerThreadFlag){ 
         for(auto curJob = jobList.begin();curJob!=jobList.end();curJob++){
@@ -45,11 +48,14 @@ void HiveScheduler::RunScheduler(){
     }
 }
 
+//start scheduler thread
 void HiveScheduler::StartScheduler(){
     schedulerThreadFlag = 0;
     schedulerThreadPtr = std::make_unique<std::thread>(std::bind(&HiveScheduler::RunScheduler,this));
 }
 
+
+//stop scheduler and wait for thread to stop
 void HiveScheduler::StopScheduler(){
     schedulerThreadFlag=1;
     schedulerThreadPtr->join();

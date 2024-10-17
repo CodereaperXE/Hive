@@ -52,6 +52,22 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "cinttypes": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "csignal": "cpp",
+        "bitset": "cpp",
+        "complex": "cpp",
+        "condition_variable": "cpp",
+        "list": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "optional": "cpp",
+        "future": "cpp",
+        "mutex": "cpp",
+        "scoped_allocator": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp",
+        "typeindex": "cpp",
+        "variant": "cpp"
     }
 }
