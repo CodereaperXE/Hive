@@ -62,25 +62,25 @@ void HiveScheduler::StopScheduler(){
 }
 
 
-int main(){
+// int main(){
 
     
     
-    fs::path source{"./something/"};
-    fs::path dest{"./destination/"};
+//     fs::path source{"./something/"};
+//     fs::path dest{"./destination/"};
 
-    //fs::path s{"./something/"};
-    // fs::path d{"./dst/"};
+//     //fs::path s{"./something/"};
+//     // fs::path d{"./dst/"};
     
-    HiveBackup b(source,dest,DIFFERENTIAL);
-    // HiveBackup c(s,d,VERSIONED);
+//     HiveBackup b(source,dest,DIFFERENTIAL);
+//     // HiveBackup c(s,d,VERSIONED);
 
-    HiveScheduler h;
+//     HiveScheduler h;
     
-    h.AddSchedule("first",0,0,0,b);
-    // h.AddSchedule("second",0,0,0,c);
-    h.StartScheduler();
+//     h.AddSchedule("first",0,0,0,b);
+//     // h.AddSchedule("second",0,0,0,c);
+//     h.StartScheduler();
 
-    std::this_thread::sleep_for(std::chrono::seconds(70));
-    h.StopScheduler();
-}
+//     std::this_thread::sleep_for(std::chrono::seconds(70));
+//     h.StopScheduler();
+// }
