@@ -100,13 +100,14 @@ int HiveBackup::Backup(fs::path& sourcePath, fs::path& destinationPath,BackupMod
                         //if file changed
                         //create versioned backup
                         //put new changed file
-                        std::cout<<"creating version"<<std::endl;
+                        std::cout<<"Creating Version"<<std::endl;
                         CreateVersionBackup(dstPath,entry.path());
                     }
 
                     else if(mode == BackupMode::DIFFERENTIAL){
                         //if differential backup mode
-                        CreateDifferentialBackup(entry.path(),dstPath);
+                        std::cout<<"Updating Changes"<<std::endl;
+                        CreateDifferentialBackup(dstPath,entry.path());
                     }
                 }
             }
