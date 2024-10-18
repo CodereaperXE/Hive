@@ -10,14 +10,19 @@
 namespace fs = std::filesystem;
 
 
-int findIndex(std::string target,std::vector<std::string>& argv){
+int FindIndex(std::string target,std::vector<std::string>& argv){
     auto it = std::find(argv.begin(),argv.end(),target);
     return (it!=argv.end()) ? std::distance(argv.begin(),it) : -1;
 }
 
-void match(std::map<std::string,int>& targetParams,std::vector<std::string>& argv){
-    if(targetParams["-b"] && targetParams["-s"]){
-        int indexB = findIndex("-b",argv);
+void MatchParams(std::map<std::string,int>& targetParams,std::vector<std::string>& argv){
+
+    if(targetParams["--help"]){
+        std::cout<<"Usage: Hive\t [-b <source> <destination> <backup mode (Diffential/Versioned)>],\n\t\t [-b <params(same is -b)> -s <backup name> <days> <hours> <minutes>]\n\t\t Example usage:\n\t\t ./hivecli -b src dst DIFFERENTIAL/VERSIONED \n\t\t ./hivecli -b src dst DIFFERENTIAL/VERSIONED -s name 0 0 0 0" <<std::endl;
+
+    }
+    else if(targetParams["-b"] && targetParams["-s"]){
+        int indexB = FindIndex("-b",argv);
         fs::path src(argv[indexB+1]);
         fs::path dst(argv[indexB+2]);
 
@@ -28,7 +33,7 @@ void match(std::map<std::string,int>& targetParams,std::vector<std::string>& arg
         };
 
 
-        int indexS = findIndex("-s",argv);
+        int indexS = FindIndex("-s",argv);
         std::string backupName = argv[indexS + 1];
         int days = std::stoi(argv[indexS + 2]);
         int hours = std::stoi(argv[indexS + 3]);
@@ -45,7 +50,7 @@ void match(std::map<std::string,int>& targetParams,std::vector<std::string>& arg
 
     }
     else if(targetParams["-b"]){
-        int indexB = findIndex("-b",argv);
+        int indexB = FindIndex("-b",argv);
         fs::path src(argv[indexB+1]);
         fs::path dst(argv[indexB+2]);
 
@@ -61,8 +66,15 @@ void match(std::map<std::string,int>& targetParams,std::vector<std::string>& arg
     }
 }
 
-std::vector<std::string> cliArgs;
+
 int main(int argc,char** argv){
+    std::vector<std::string> cliArgs;
+
+    if(argc <= 1) {
+        std::cout<<"Try --help to know more"<<std::endl;
+        return 0;
+    }
+
     for(int i=0;i<argc;i++){
         cliArgs.push_back(argv[i]);
     }
@@ -72,8 +84,7 @@ int main(int argc,char** argv){
         paramMp[elem]++;
     }
 
-
-    match(paramMp,cliArgs);
+    MatchParams(paramMp,cliArgs);
     
     
 
