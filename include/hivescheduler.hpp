@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <filesystem>
 #include <vector>
@@ -5,7 +6,7 @@
 #include <thread>  
 #include <memory>
 #include <functional>
-#include "hive.hpp"
+#include "hivebackup.hpp"
 
 
 class BackupJob{

@@ -1,4 +1,4 @@
-#include "scheduler.hpp"
+#include "hivescheduler.hpp"
 
 //default constructtor
 HiveScheduler::~HiveScheduler(){

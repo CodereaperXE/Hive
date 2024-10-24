@@ -1,1 +1,3 @@
-g++ -std=c++20 -o ./build/hivecli ./src/hivecli.cpp ./src/scheduler.cpp ./src/hive.cpp -I include/ -lssl -lcrypto -lpthread
+# g++ -std=c++20 -o ./build/hivecli ./src/hivecli.cpp ./src/hivescheduler.cpp ./src/hivebackup.cpp -I include/ -lssl -lcrypto -lpthread
+g++ -std=c++20 -o ./build/hivedaemon ./src/hivedaemon.cpp ./src/hiveclihandler.cpp ./src/hivescheduler.cpp ./src/hivebackup.cpp ./src/hivesupport.cpp -I include/ -lssl -lcrypto -lpthread
+g++ -std=c++20 -o ./build/hiveclient ./src/hiveclient.cpp ./src/hivesupport.cpp -I include/ 
