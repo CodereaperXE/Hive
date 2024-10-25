@@ -55,6 +55,8 @@ while(1){
     
     //main code
     HiveBackup backupObj(data.src,data.dst,data.mode);
+    if(schedulerObj->SchedulerStatus())
+        schedulerObj->StopScheduler();
     if(data.schedulerFlag){
         schedulerObj->AddSchedule(data.backupName,data.days,data.hours,data.minutes,backupObj);
     }

@@ -29,6 +29,8 @@ class HiveScheduler{
     
     void StartScheduler();
     void StopScheduler();
+
+    int SchedulerStatus();
     
     private:
    
@@ -37,5 +39,6 @@ class HiveScheduler{
 
     std::vector<BackupJob> jobList;
     int schedulerThreadFlag;
+    int schedulerStatus;
     std::unique_ptr<std::thread> schedulerThreadPtr;
 };

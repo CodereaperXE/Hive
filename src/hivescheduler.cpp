@@ -51,6 +51,7 @@ void HiveScheduler::RunScheduler(){
 //start scheduler thread
 void HiveScheduler::StartScheduler(){
     schedulerThreadFlag = 0;
+    schedulerStatus=1;
     schedulerThreadPtr = std::make_unique<std::thread>(std::bind(&HiveScheduler::RunScheduler,this));
 }
 
@@ -58,7 +59,13 @@ void HiveScheduler::StartScheduler(){
 //stop scheduler and wait for thread to stop
 void HiveScheduler::StopScheduler(){
     schedulerThreadFlag=1;
+    schedulerStatus=0;
     schedulerThreadPtr->join();
+}
+
+//scheduler status
+int HiveScheduler::SchedulerStatus(){
+    return schedulerStatus;
 }
 
 
