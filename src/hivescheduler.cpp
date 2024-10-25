@@ -68,6 +68,14 @@ int HiveScheduler::SchedulerStatus(){
     return schedulerStatus;
 }
 
+//get running jobs
+std::string HiveScheduler::GetRunningJobs(){
+    std::string jobs;
+    for(auto job : jobList){
+        jobs+=job.jobName + " " + job.backupObj.GetBackupInfo() + "\n"; 
+    }
+    return jobs;
+}
 
 // int main(){
 

@@ -31,6 +31,8 @@ class HiveScheduler{
     void StopScheduler();
 
     int SchedulerStatus();
+
+    std::string GetRunningJobs();
     
     private:
    

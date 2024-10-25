@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
 
     std::vector<std::string> args = ConvertArgsToVector(argc, argv);
     char buffer[1024];
-    strcpy(buffer, Serialize(args).c_str());
+    strncpy(buffer, Serialize(args).c_str(),sizeof(buffer));
     
     if (WriteArgsMQueue(mqueue, buffer, daemonIdentifier) == 0) {
         std::cerr << "Failed to write to message queue" << std::endl;

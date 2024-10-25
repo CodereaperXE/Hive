@@ -18,6 +18,7 @@ class MatchParamOp{
         minutes=0;
         schedulerFlag=0;
         helpFlag=0;
+        mode=DIFFERENTIAL;
     }
 
     int days;
@@ -30,6 +31,7 @@ class MatchParamOp{
     fs::path dst;
     int helpFlag;
     std::string helpMsg;
+    int getRunningJobs;
 };
 
 MatchParamOp MatchParams(std::vector<std::string>& );

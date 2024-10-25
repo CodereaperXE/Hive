@@ -176,3 +176,8 @@ int HiveBackup::CheckIntegrity(const fs::path& path1, const fs::path& path2) {
 
     return 1;  // Files are identical
 }
+
+
+std::string HiveBackup::GetBackupInfo(){
+    return sourcePath.string() +" "+ destinationPath.string() +" " + std::string((mode==VERSIONED) ? "VERSIONED" : "DIFFERENTIAL");
+}

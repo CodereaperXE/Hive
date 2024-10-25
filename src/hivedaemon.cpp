@@ -8,11 +8,6 @@
 #include "hiveclihandler.hpp"
 
 
-
-// void SignalHandler(int signum){
-    
-// }
-
 // HiveBackup* backupObj;
 HiveScheduler* schedulerObj;
 
@@ -50,24 +45,30 @@ while(1){
     
     std::cout<<"running"<<std::endl;
     MatchParamOp data = MatchParams(args);
-    std::cout<<data.backupName;
-    std::cout<<data.schedulerFlag;
+    //for debugging
+    // std::cout<<data.backupName;
+    // std::cout<<data.schedulerFlag;
     
     //main code
     HiveBackup backupObj(data.src,data.dst,data.mode);
+
+    //if scheduler running stop scheduler temporarily to add task
     if(schedulerObj->SchedulerStatus())
         schedulerObj->StopScheduler();
     if(data.schedulerFlag){
         schedulerObj->AddSchedule(data.backupName,data.days,data.hours,data.minutes,backupObj);
     }
 
+    //start scheduler
     schedulerObj->StartScheduler();
 
-    char buffer[128];
-
-
-    std::vector<std::string> v = {std::to_string(data.minutes),data.src,data.dst , std::to_string(data.schedulerFlag)};
-    strcpy(buffer,Serialize(v).c_str());
+    char buffer[1024];
+    std::vector<std::string> response;
+    //getting all runnning jobs in scheduler
+    if (data.getRunningJobs) response.push_back(schedulerObj->GetRunningJobs());
+    
+    //write into response buffer to send to client
+    strncpy(buffer,Serialize(response).c_str(),sizeof(buffer));
     WriteArgsMQueue(mqueue,buffer,clientIdentifier);
     
     std::this_thread::sleep_for(std::chrono::milliseconds(100));

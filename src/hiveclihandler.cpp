@@ -29,12 +29,15 @@ MatchParamOp MatchParams(std::vector<std::string>& argv){
             else return DIFFERENTIAL;
         };
 
+        output.mode=mode();
+
 
         int indexS = FindIndex("-s",argv);
         output.backupName=argv[indexS + 1];
         output.days = std::stoi(argv[indexS + 2]);
         output.hours = std::stoi(argv[indexS + 3]);
         output.minutes = std::stoi(argv[indexS + 4]);
+        
 
        
         // HiveBackup backupObj(src,dst,mode());
@@ -63,6 +66,10 @@ MatchParamOp MatchParams(std::vector<std::string>& argv){
         output.mode=mode();
         
     }
+    else if(targetParams["jobs"]){
+        output.getRunningJobs=1;
+    }
+    // std::cout<<output.mode<<std::endl;
     return output;
 }
 

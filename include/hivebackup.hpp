@@ -27,7 +27,7 @@ class HiveBackup{
     void StartBackup();
     int Backup(fs::path&,fs::path&,BackupMode);
     int GetBackupStatus();
-
+    std::string GetBackupInfo();
     private:
     fs::path sourcePath;
     fs::path destinationPath;
