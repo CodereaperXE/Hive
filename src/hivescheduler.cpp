@@ -77,6 +77,20 @@ std::string HiveScheduler::GetRunningJobs(){
     return jobs;
 }
 
+//remove running jobs
+int HiveScheduler::RemoveRunningJob(std::string jobName){
+    int index=-1;
+    for(int i=0;i<jobList.size();i++){
+        if(jobName == jobList[i].jobName) {
+            index = i;
+            break;
+        }
+    }
+    jobList.erase(jobList.begin()+index);
+    return 1;
+
+}
+
 // int main(){
 
     

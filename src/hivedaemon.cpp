@@ -52,20 +52,30 @@ while(1){
     //main code
     HiveBackup backupObj(data.src,data.dst,data.mode);
 
-    //if scheduler running stop scheduler temporarily to add task
-    if(schedulerObj->SchedulerStatus())
-        schedulerObj->StopScheduler();
-    if(data.schedulerFlag){
+    if(data.addScheduleFlag){
+        //if scheduler running stop scheduler temporarily to add task
+        if(schedulerObj->SchedulerStatus())
+            schedulerObj->StopScheduler();
         schedulerObj->AddSchedule(data.backupName,data.days,data.hours,data.minutes,backupObj);
     }
-
-    //start scheduler
-    schedulerObj->StartScheduler();
 
     char buffer[1024];
     std::vector<std::string> response;
     //getting all runnning jobs in scheduler
     if (data.getRunningJobs) response.push_back(schedulerObj->GetRunningJobs());
+
+    //removing job from scheduler
+    
+
+    if(data.removeRunningJob) {
+        if(schedulerObj->SchedulerStatus())
+            schedulerObj->StopScheduler();
+        schedulerObj->RemoveRunningJob(data.removeRunningJobName);
+        response.push_back("Removed job "+ data.removeRunningJobName);
+    }
+
+    //start scheduler
+    if(!schedulerObj->SchedulerStatus()) schedulerObj->StartScheduler();
     
     //write into response buffer to send to client
     strncpy(buffer,Serialize(response).c_str(),sizeof(buffer));

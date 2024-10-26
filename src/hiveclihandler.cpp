@@ -18,7 +18,7 @@ MatchParamOp MatchParams(std::vector<std::string>& argv){
         output.helpMsg="Usage: Hive\t [-b <source> <destination> <backup mode (Diffential/Versioned)>],\n\t\t [-b <params(same is -b)> -s <backup name> <days> <hours> <minutes>]\n\t\t Example usage:\n\t\t ./hivecli -b src dst DIFFERENTIAL/VERSIONED \n\t\t ./hivecli -b src dst DIFFERENTIAL/VERSIONED -s name 0 0 0 0";
 
     }
-    else if(targetParams["-b"] && targetParams["-s"]){
+    if(targetParams["-b"] && targetParams["-s"]){
         int indexB = FindIndex("-b",argv);
         output.src=argv[indexB+1];
         output.dst=argv[indexB+2];
@@ -43,7 +43,7 @@ MatchParamOp MatchParams(std::vector<std::string>& argv){
         // HiveBackup backupObj(src,dst,mode());
         
         // HiveScheduler backupScheduler;
-        output.schedulerFlag=1;
+        output.addScheduleFlag=1;
         // backupScheduler.AddSchedule(backupName,days,hours,minutes,backupObj);
         // backupScheduler.StartScheduler();
         // std::cout<<src<<"  "<<dst<<" "<< days <<hours<< minutes<<std::endl;
@@ -66,10 +66,17 @@ MatchParamOp MatchParams(std::vector<std::string>& argv){
         output.mode=mode();
         
     }
-    else if(targetParams["jobs"]){
+    //list jobs in scheduler
+    if(targetParams["-jobs"]){
         output.getRunningJobs=1;
     }
     // std::cout<<output.mode<<std::endl;
+    //remove job in scheduler
+    if(targetParams["-remove"]){
+        output.removeRunningJob=1;
+        int indexJ = FindIndex("-remove",argv);
+        output.removeRunningJobName = argv[indexJ+1];
+    }
     return output;
 }
 
