@@ -13,6 +13,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sstream>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 class IpcMessage{
     public:

@@ -1,2 +1,0 @@
-seconds,/home/rishab/projects/hive/temo/,/home/rishab/projects/hive/tp/,1,0
-first,/home/rishab/projects/hive/temo/,/home/rishab/projects/hive/tp/,1,0

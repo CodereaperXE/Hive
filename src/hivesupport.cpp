@@ -5,7 +5,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <sstream>
 
 
 std::vector<std::string> ConvertArgsToVector(int argc,char** argv){
@@ -156,6 +155,10 @@ std::vector<std::vector<std::string>> GetSavedSchedulerData(const std::string fi
         data.push_back(temp);
     }
     file.close();
+    //remove file
+    if(fs::exists(fileName)){
+        fs::remove(fileName);
+    }
     return data;
 }
 
