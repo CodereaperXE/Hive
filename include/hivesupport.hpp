@@ -44,3 +44,5 @@ int CreatePidFile(std::string);
 int CheckPidFile(std::string);
 
 int RemovePidFile(std::string);
+
+std::vector<std::vector<std::string>> GetSavedSchedulerData(const std::string);

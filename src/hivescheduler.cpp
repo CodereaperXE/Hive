@@ -8,7 +8,7 @@ HiveScheduler::~HiveScheduler(){
 //add backup schedule for joblist
 int HiveScheduler::AddSchedule(std::string jobName,int dayDuration, int hourDuration, int minuteDuration, HiveBackup backupObj){
     std::chrono::system_clock::time_point curTime = std::chrono::system_clock::now();
-    BackupJob job(jobName,dayDuration + hourDuration + minuteDuration, backupObj);
+    BackupJob job(jobName,dayDuration*24*60 + hourDuration*60 + minuteDuration, backupObj);
     job.nextSchedule = curTime + job.targetDuration;
     jobList.push_back(job);
     return 0;
@@ -89,6 +89,23 @@ int HiveScheduler::RemoveRunningJob(std::string jobName){
     jobList.erase(jobList.begin()+index);
     return 1;
 
+}
+
+
+//signal handler data
+
+std::vector<std::string> HiveScheduler::GetSignalHandlerData(){
+    std::vector<std::string> data;
+    for(auto job : jobList){
+        std::string jobName  = job.jobName;
+        std::string sourcePath = job.backupObj.GetSourcePath();
+        std::string destinationPath = job.backupObj.GetDestinationPath();
+        std::string mode = std::to_string(job.backupObj.GetMode());
+        std::string duration = std::to_string(job.targetDuration.count());
+        std::string op = jobName + "," + sourcePath +","+destinationPath+","+mode+","+duration;
+        data.push_back(op);
+    }
+    return data;
 }
 
 // int main(){

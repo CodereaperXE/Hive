@@ -34,6 +34,9 @@ class HiveScheduler{
 
     std::string GetRunningJobs();
     int RemoveRunningJob(std::string);
+
+    //signal handler data
+    std::vector<std::string> GetSignalHandlerData();
     
     private:
    

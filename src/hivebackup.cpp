@@ -122,6 +122,18 @@ int HiveBackup::Backup(fs::path& sourcePath, fs::path& destinationPath,BackupMod
 }
 
 
+fs::path HiveBackup::GetSourcePath(){
+    return sourcePath;
+}
+
+fs::path HiveBackup::GetDestinationPath(){
+    return destinationPath;
+}
+
+int HiveBackup::GetMode(){
+    return mode;
+}
+
 
 //hash evaluation functions
 
