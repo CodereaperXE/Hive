@@ -17,7 +17,7 @@ void SignalHandler(int signum) {
     std::cout << "Received SIGTERM" << std::endl;
 
     // Open the file in append mode and binary mode
-    std::ofstream file("/home/rishab/projects/hive/build/in.txt", std::ios::app | std::ios::binary);
+    std::ofstream file("/var/tmp/hivetemp.txt", std::ios::app | std::ios::binary);
     
     // Check if the file opened successfully
     if (!file) {
@@ -41,7 +41,7 @@ void SignalHandler(int signum) {
 int GetSavedData(){
     if(!poweroffStatus){
         if(schedulerObj !=nullptr){
-            auto data = GetSavedSchedulerData("/home/rishab/projects/hive/build/in.txt");
+            auto data = GetSavedSchedulerData("/var/tmp/hivetemp.txt");
             //stop scheduler if running
             if(schedulerObj->SchedulerStatus()){
                 schedulerObj->StopScheduler();
